@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>classpath:jdbc.properties</value>
+        </property>
+    </bean>
+    <!-- 配置包扫描器 -->
+    <context:component-scan base-package="com"/>
+    <!-- 配置注解驱动 -->
+    <mvc:annotation-driven/>
+    <!--静态资源配置-->
+
+    <!--方法一，该配置会让返回的参数生成新的请求，从静态资源开始一层一层查询，
+    如果有静态资源则返回静态资源，无，则以新的请求形式查询路径-->
+    <!--<mvc:default-servlet-handler/>-->
+
+    <!--方法二，静态资源路径映射 针对请求配置路径-->
+    <mvc:resources mapping="/pages/**" location="/WEB-INF/pages/"/>
+    <mvc:resources mapping="/js/**" location="/WEB-INF/js/"/>
+    <mvc:resources mapping="/css/**" location="/WEB-INF/css/"/>
+
+    <!-- 视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!--数据库连接池配置 && jdbctemplate -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${dbcp.driverClassName}"/>
+        <property name="url" value="${dbcp.url}"/>
+        <property name="username" value="${dbcp.username}"/>
+        <property name="password" value="${dbcp.password}"/>
+        <property name="initialSize" value="${dbcp.initialSize}"/>
+        <property name="maxIdle" value="${dbcp.maxIdle}"/>
+        <property name="removeAbandonedTimeout" value="${dbcp.removeAbandonedTimeout}"/>
+        <property name="minIdle" value="${dbcp.minIdle}"/>
+        <property name="removeAbandoned" value="${dbcp.removeAbandonedOnBorrow}"/>
+        <property name="maxActive" value="${dbcp.maxTotal}"/>
+    </bean>
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--dao层-->
+    <!--<bean id="studentDao" class="com.dao.StudentDao">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    &lt;!&ndash;services层&ndash;&gt;
+    <bean id="studentService" class="com.service.StudentService">
+        <property name="dao" ref="studentDao"/>
+    </bean>
+    &lt;!&ndash;controller层&ndash;&gt;
+    <bean id="studentController" class="com.controller.StudentController">
+        <property name="service" ref="studentService"/>
+    </bean>-->
+    <!--filters-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/student/**"/>
+            <bean class="com.filters.SessionHandlerIntercept"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--transaction配置-->
+    <bean id="transactionmanager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--Aop层-->
+    <!--日志切面-->
+    <bean id="logWritor" class="com.aop.LogWritor"/>
+
+
+    <tx:advice id="daoAdvice" transaction-manager="transactionmanager">
+        <tx:attributes>
+            <tx:method name="find*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--切面配置-->
+    <aop:config>
+        <aop:aspect id="logwrite" ref="logWritor">
+            <aop:pointcut id="stuService" expression="execution(* com.service.StudentService.*(..))"/>
+            <aop:before method="logBefore" pointcut-ref="stuService"/>
+        </aop:aspect>
+    </aop:config>
+</beans>
