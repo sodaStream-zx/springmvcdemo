@@ -1,11 +1,16 @@
 package com.model;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+
 /**
  * @author 一杯咖啡
  */
 public class Student {
     private Integer sid;
+    @NotNull
     private String sname;
+    @Max(10)
     private Integer sage;
 
     public Student() {

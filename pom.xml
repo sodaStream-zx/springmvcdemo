@@ -102,17 +102,10 @@
 
         <!--测试依赖-->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.testifyproject.junit4</groupId>
             <artifactId>junit4</artifactId>
             <version>1.0.2</version>
         </dependency>
-
         <!--Aop-->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -131,6 +124,17 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
             <version>2.0.11.RELEASE</version>
+        </dependency>
+        <!--JSR303-->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.14.Final</version>
         </dependency>
     </dependencies>
 

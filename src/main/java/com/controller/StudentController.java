@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class StudentController {
     }
 
     @RequestMapping(value = "/addone", method = RequestMethod.POST)
-    public String save(Model model, Student student) {
+    public String save(Model model, @Valid Student student) {
         Boolean flag = studentService.add(student);
         if (flag) {
             model.addAttribute("msg", "添加成功");
@@ -82,7 +83,7 @@ public class StudentController {
     }
 
     @RequestMapping(value = "/updateone", method = RequestMethod.POST)
-    public String changeone(Student student, Model model) {
+    public String changeone(@Valid Student student, Model model) {
         boolean flag = studentService.fresh(student);
         if (flag) {
             model.addAttribute("msg", "修改成功");

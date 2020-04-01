@@ -1,7 +1,6 @@
 package com.filters;
 
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -11,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author 一杯咖啡
  */
-@Controller
+//@Controller
 public class SessionHandlerIntercept implements HandlerInterceptor {
     private static final Logger log = Logger.getLogger(SessionHandlerIntercept.class);
 

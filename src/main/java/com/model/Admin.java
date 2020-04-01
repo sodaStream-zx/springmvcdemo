@@ -1,13 +1,19 @@
 package com.model;
 
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+
 /**
  * @author 一杯咖啡
  */
 public class Admin {
     private Integer aid;
+    @NotNull
     private String aname;
+    @NotNull
     private String apwd;
+    @Max(10)
     private Integer aauthority;
 
 

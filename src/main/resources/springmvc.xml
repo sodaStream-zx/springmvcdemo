@@ -38,7 +38,6 @@
         <property name="username" value="${dbcp.username}"/>
         <property name="password" value="${dbcp.password}"/>
         <property name="initialSize" value="${dbcp.initialSize}"/>
-        <property name="maxIdle" value="${dbcp.maxIdle}"/>
         <property name="removeAbandonedTimeout" value="${dbcp.removeAbandonedTimeout}"/>
         <property name="minIdle" value="${dbcp.minIdle}"/>
         <property name="removeAbandoned" value="${dbcp.removeAbandonedOnBorrow}"/>
@@ -71,10 +70,6 @@
     <bean id="transactionmanager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
-    <!--Aop层-->
-    <!--日志切面-->
-    <bean id="logWritor" class="com.aop.LogWritor"/>
-
 
     <tx:advice id="daoAdvice" transaction-manager="transactionmanager">
         <tx:attributes>
@@ -82,9 +77,15 @@
             <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>
     </tx:advice>
+
+    <!--Aop层-->
+    <!--日志切面-->
+    <bean id="logWritor" class="com.aop.LogWritor"/>
+
     <!--切面配置-->
     <aop:config>
         <aop:aspect id="logwrite" ref="logWritor">
+            <!--切点-->
             <aop:pointcut id="stuService" expression="execution(* com.service.StudentService.*(..))"/>
             <aop:before method="logBefore" pointcut-ref="stuService"/>
         </aop:aspect>
